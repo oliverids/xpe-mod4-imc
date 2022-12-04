@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.min.css">
+    <title>Cálculo IMC</title>
+</head>
+
+<body>
+    <main>
+        <h1>Calcule seu IMC</h1>
+
+        <form>
+            <fieldset>
+                <div class="div-input">
+                    <label for="peso">Peso (kg):</label>
+                    <input type="number" id="peso" placeholder="Ex: 89" step=".01" min="1">
+                </div>
+
+                <div class="div-input">
+                    <label for="altura">Altura (m):</label>
+                    <input type="number" id="altura" placeholder="Ex: 1.71" step=".01" min="1">
+                </div>
+            </fieldset>
+
+            <div class="cta">
+                <button id="calcular">Calcular</button>
+                <button id="reset">Limpar</button>
+            </div>
+        </form>
+
+        <section id="results">
+            <h2>Seus resultados</h2>
+            <p>Seu IMC é: <span id="imcNumber"></span></p>
+            <p>Sua classificação é: <span id="imcClass"></span></p>
+        </section>
+    </main>
+
+    <section id="history">
+        <button id="showHistorico">Mostrar histórico de cálculos</button>
+
+        <div class="lista">
+            <h3>Histórico</h3>
+            <ul id="listaHistorico"></ul>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
