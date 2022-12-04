@@ -6,7 +6,7 @@ const pesoInput = document.getElementById('peso'),
     imcNumber = document.getElementById('imcNumber'),
     imcClass = document.getElementById('imcClass');
 
-let array = [];
+let arrayInicial = [];
 
 function updateHistorico(array) {
     let listaHistorico = document.getElementById('listaHistorico');
@@ -17,42 +17,46 @@ function updateHistorico(array) {
         let item = document.createElement('li');
 
         item.innerHTML = `
-            <p><strong>Peso:</strong> ${array[i].peso}</p>
-            <p><strong>Altura:</strong> ${array[i].altura}</p>
-            <p><strong>IMC:</strong> ${array[i].imc}</p>
-            <p><strong>Classificação:</strong> ${array[i].classi}</p>
+            <span class="horario">Feito às ${array[i].data.hora} de ${array[i].data.dia}/${array[i].data.mes}/${array[i].data.ano}.</span>
+            <p>Peso: <strong>${array[i].peso} kg</strong></p>
+            <p>Altura: <strong>${array[i].altura} m</strong></p>
+            <p>IMC: <strong>${array[i].imc}</strong></p>
+            <p>Classificação: <strong>${array[i].classi}</strong></p>
         `;
         listaHistorico.appendChild(item);
     }
 }
-updateHistorico(JSON.parse(localStorage.getItem('calculos')));
 
-function saveLocalStorage(peso, altura, imc, classi) {
+let calculosListaExistente = localStorage.getItem('calculos');
+if (calculosListaExistente) updateHistorico(JSON.parse(calculosListaExistente));
+
+function saveLocalStorage(peso, altura, imc, classi, data) {
     let calculo = {
         peso,
         altura,
         imc,
-        classi
+        classi, 
+        data
     };
 
-    array = JSON.parse(localStorage.getItem('calculos'));
+    if (localStorage.getItem('calculos')) {
+        arrayInicial = JSON.parse(localStorage.getItem('calculos'));
 
-    if (localStorage.getItem('calculos') !== null) {
-        if (array.length < 5) {
-            array.push(calculo);
-            localStorage.setItem('calculos', JSON.stringify(array));
+        if (arrayInicial.length < 5) {
+            arrayInicial.push(calculo);
+            localStorage.setItem('calculos', JSON.stringify(arrayInicial));
         } else {
-            array.shift();
-            array.push(calculo);
-            localStorage.setItem('calculos', JSON.stringify(array));
+            arrayInicial.shift();
+            arrayInicial.push(calculo);
+            localStorage.setItem('calculos', JSON.stringify(arrayInicial));
         }
 
     } else {
-        array.push(calculo);
-        localStorage.setItem('calculos', JSON.stringify(array));
+        arrayInicial.push(calculo);
+        localStorage.setItem('calculos', JSON.stringify(arrayInicial));
     }
 
-    updateHistorico(array);
+    updateHistorico(arrayInicial);
 }
 
 function calculaIMC(peso, altura) {
@@ -84,7 +88,15 @@ function calculaIMC(peso, altura) {
 
         resultsSection.classList.add('ativo');
 
-        saveLocalStorage(peso, altura, imc, classificacao);
+        let dataObject = new Date(),
+            hora = `${dataObject.getHours()}:${dataObject.getMinutes() < 10 ? "0"+dataObject.getMinutes() : dataObject.getMinutes()}`,
+            mes = dataObject.getUTCMonth() + 1,
+            dia = dataObject.getUTCDate() < 10 ? `0${dataObject.getUTCDate()}` : dataObject.getUTCDate(),
+            ano = +(dataObject.getUTCFullYear().toString().slice(2,4));
+        
+        let data = {hora, mes, dia, ano};
+
+        saveLocalStorage(peso, altura, imc, classificacao, data);
     }
 }
 
@@ -105,7 +117,7 @@ const historySection = document.getElementById('history'),
 showHistorico.addEventListener('click', () => {
     historySection.classList.toggle('ativo');
 
-    if(historySection.classList.contains('ativo')) {
+    if (historySection.classList.contains('ativo')) {
         showHistorico.innerText = 'Esconder histórico de cálculos';
     } else {
         showHistorico.innerText = 'Mostrar histórico de cálculos';
